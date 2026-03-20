@@ -21,6 +21,33 @@ function createBot() {
 
   bot.on('spawn', () => {
     console.log('✅ Bot joined server')
+
+  // Anti-AFK loop
+  setInterval(() => {
+    const actions = ['forward', 'back', 'left', 'right']
+
+    const action = actions[Math.floor(Math.random() * actions.length)]
+
+    bot.setControlState(action, true)
+
+    setTimeout(() => {
+      bot.setControlState(action, false)
+    }, 2000)
+
+    // Random jump
+    if (Math.random() > 0.7) {
+      bot.setControlState('jump', true)
+      setTimeout(() => bot.setControlState('jump', false), 500)
+    }
+
+    // Random look
+    bot.look(
+      Math.random() * Math.PI * 2,
+      Math.random() * Math.PI - Math.PI / 2,
+      true
+    )
+
+  }, 5000) // every 5 sec
   })
 
   bot.on('end', () => {
