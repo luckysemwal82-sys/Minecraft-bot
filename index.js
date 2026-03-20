@@ -5,7 +5,8 @@ function createBot() {
     host: 'gfarsmp.falixsrv.me',
     port: 25863,
     username: 'LuckyBot123',
-    auth: 'offline'
+    auth: 'offline',
+    version: '1.20.1'
   })
 
   bot.on('spawn', () => {
