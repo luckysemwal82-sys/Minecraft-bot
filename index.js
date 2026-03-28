@@ -13,7 +13,7 @@ const mineflayer = require('mineflayer')
 function createBot() {
   const bot = mineflayer.createBot({
     host: 'gfarsmp.falixsrv.me',
-    port: 27815,
+    port: 24793,
     username: 'LuckyBot123',
     auth: 'offline',
     version: '1.20.1'
