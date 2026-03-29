@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 
+// 🌐 Keep-alive web server (for Railway/UptimeRobot)
 app.get('/', (req, res) => {
   res.send('Bot is alive ✅')
 })
@@ -8,6 +9,7 @@ app.get('/', (req, res) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log('Web server running')
 })
+
 const mineflayer = require('mineflayer')
 
 function createBot() {
@@ -19,49 +21,50 @@ function createBot() {
     version: '1.20.1'
   })
 
-  bot.on('spawn', () => {
+  // ✅ When bot joins
+  bot.once('spawn', () => {
     console.log('✅ Bot joined server')
 
-  // Anti-AFK loop
-  setInterval(() => {
-    const actions = ['forward', 'back', 'left', 'right']
+    bot.waitForChunksToLoad(() => {
+      console.log('🌍 Chunks loaded')
 
-    const action = actions[Math.floor(Math.random() * actions.length)]
+      // ⏳ Wait before doing anything (IMPORTANT)
+      setTimeout(() => {
 
-    bot.setControlState(action, true)
+        console.log('🤖 Starting anti-AFK')
 
-    setTimeout(() => {
-      bot.setControlState(action, false)
-    }, 2000)
+        // 🔁 Anti-AFK movement loop
+        setInterval(() => {
+          const actions = ['forward', 'back', 'left', 'right', 'jump']
+          const action = actions[Math.floor(Math.random() * actions.length)]
 
-    // Random jump
-    if (Math.random() > 0.7) {
-      bot.setControlState('jump', true)
-      setTimeout(() => bot.setControlState('jump', false), 500)
-    }
+          bot.setControlState(action, true)
 
-    // Random look
-    bot.look(
-      Math.random() * Math.PI * 2,
-      Math.random() * Math.PI - Math.PI / 2,
-      true
-    )
+          setTimeout(() => {
+            bot.setControlState(action, false)
+          }, 1000)
 
-  }, 5000) // every 5 sec
+        }, 5000)
+
+      }, 5000)
+
+    })
   })
 
+  // 🔄 Auto reconnect
   bot.on('end', () => {
-    console.log('🔄 Reconnecting...')
+    console.log('❌ Disconnected... Reconnecting')
     setTimeout(createBot, 5000)
   })
 
   bot.on('kicked', (reason) => {
-    console.log('❌ Kicked:', reason)
+    console.log('🚫 Kicked:', reason)
   })
 
   bot.on('error', (err) => {
-    console.log('⚠ Error:', err.message)
+    console.log('⚠️ Error:', err)
   })
 }
 
-createBot() 
+// 🚀 Start bot
+createBot()
